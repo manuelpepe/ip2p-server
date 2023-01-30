@@ -17,7 +17,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db_.Close()
+	defer db_.DB.Close()
 	server := handlers.Server{DB: db_}
 	router := mux.NewRouter()
 	router.HandleFunc("/isp", server.HandleISP)
