@@ -15,7 +15,7 @@ func Int2ip(nn uint32) net.IP {
 }
 
 func Ip2int(ip net.IP) uint32 {
-	return binary.BigEndian.Uint32(ip)
+	return binary.BigEndian.Uint32(ip.To4())
 }
 
 
