@@ -34,7 +34,11 @@ func (s *Server) HandleIP(w http.ResponseWriter, r *http.Request) {
 	// All data for a given IP
 	vars := mux.Vars(r)
 	ip := net.ParseIP(vars["ip"])
-	converted := ipconv.Ip2int(ip)
+	converted, err := ipconv.Ip2int(ip)
+	if err != nil {
+		respondWithJson(w, err.Error())
+		return
+	}
 	ipinfo, err := s.DB.GetDataForIP(converted)
 	if err != nil {
 		respondWithJson(w, err.Error())
