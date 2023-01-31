@@ -17,6 +17,7 @@ services:
       - postgres
     networks:
       - ip2p
+    restart: always
 
   postgres:
     container_name: ip2p_postgres
@@ -34,7 +35,7 @@ services:
       - ./pgdata:/root
     networks:
       - ip2p
-
+      
 volumes:
   postgres-db:
 
