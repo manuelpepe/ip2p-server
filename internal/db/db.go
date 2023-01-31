@@ -98,7 +98,7 @@ func (db *DB) GetIPCountInCountry(countryCode string) uint {
 		FROM ip2location_px7
 		WHERE country_code = $1`, countryCode).Scan(&total_ips)
 	if err != nil {
-		panic(err)
+		return 0
 	}
 	return total_ips
 }
