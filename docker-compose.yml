@@ -1,8 +1,25 @@
 version: '3.9'
 
 services:
+  server:
+    container_name: ip2p_server
+    build: 
+      context: .
+      dockerfile: ./resources/Dockerfile.app
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+    ports: 
+      - "8888:8888"
+    depends_on:
+      - postgres
+    networks:
+      - ip2p
 
   postgres:
+    container_name: ip2p_postgres
     build: 
       context: .
       dockerfile: ./resources/Dockerfile.db
@@ -15,6 +32,12 @@ services:
     volumes:
       - postgres-db:/var/lib/postgresql/data
       - ./pgdata:/root
+    networks:
+      - ip2p
 
 volumes:
   postgres-db:
+
+networks:
+  ip2p:
+    driver: bridge

@@ -37,12 +37,12 @@ type ISPInfo struct {
 	TotalIPs int `json:"total_ips"`
 }
 
-
 func ConnectDB() (*DB, error) {
 	connStr := fmt.Sprintf(
-		"postgresql://%s:%s@localhost/%s?sslmode=disable",
+		"postgresql://%s:%s@%s/%s?sslmode=disable",
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
 		os.Getenv("DB_NAME"),
 	)
 	db, err := sql.Open("postgres", connStr)
