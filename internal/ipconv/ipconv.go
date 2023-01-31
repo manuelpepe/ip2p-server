@@ -15,7 +15,9 @@ func Int2ip(nn uint32) net.IP {
 func Ip2int(ip net.IP) (uint32, error) {
 	ip4 := ip.To4()
 	if ip == nil {
-		return 0, errors.New("Wrong IP format")
+		return 0, WrongIPFormatError
 	}
 	return binary.BigEndian.Uint32(ip4), nil
 }
+
+var WrongIPFormatError = errors.New("Wrong IP format")
