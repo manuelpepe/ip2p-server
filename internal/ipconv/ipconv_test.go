@@ -6,10 +6,27 @@ import (
 )
 
 func TestInt2ip(t *testing.T) {
-	got := Int2ip(400762451)
-	want := net.ParseIP("23.227.38.83")
-	if got.String() != want.String() {
-		t.Errorf("Expected %s got %s", want, got)
+	type TC struct {
+		arg    uint32
+		expRes string
+	}
+
+	var tests = []TC{
+		{400762451, "23.227.38.83"},
+		{0, "0.0.0.0"},
+		{1, "0.0.0.1"},
+		{256, "0.0.1.0"},
+		{65536, "0.1.0.0"},
+		{16777216, "1.0.0.0"},
+		{4294967295, "255.255.255.255"},
+	}
+
+	for _, test := range tests {
+		got := Int2ip(test.arg)
+		want := net.ParseIP(test.expRes)
+		if got.String() != want.String() {
+			t.Errorf("Expected %s got %s", want, got)
+		}
 	}
 }
 
