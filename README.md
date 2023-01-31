@@ -2,7 +2,7 @@
 
 A simple Go API to query data from the [IP2Proxy](https://lite.ip2location.com/database/px7-ip-proxytype-country-region-city-isp-domain-usagetype-asn) database
 
-This is the solution to the Dreamlab Challenge
+This is a solution for a Dreamlab Interview Challenge
 
 ## Challenge (simplified)
 
