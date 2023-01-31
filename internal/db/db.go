@@ -11,6 +11,32 @@ type DB struct {
 	DB *sql.DB
 }
 
+type IDB interface {
+	GetTopISPsInCountry(string, int) []ISPInfo
+	GetIPCountInCountry(countryCode string) uint
+	GetDataForIP(ip uint32) *IPInfo
+}
+
+type IPInfo struct {
+	IPBlockFrom uint32		`json:"ip_block_from"`
+	IPBlockTo 	uint32		`json:"ip_block_to"`
+	ProxyType 	string 		`json:"proxy_type"`
+	CountryCode string		`json:"country_code"`
+	CountryName string		`json:"country_name"`
+	RegionName 	string		`json:"region_name"`
+	CityName 	string		`json:"city_name"`
+	ISP 		string		`json:"isp"`
+	Domain 		string		`json:"domain"`
+	UsageType 	string		`json:"usage_type"`
+	ASN 		string		`json:"asn"`
+	AS 			string		`json:"as"`
+}
+
+type ISPInfo struct {
+	Name string `json:"name"`
+	TotalIPs int `json:"total_ips"`
+}
+
 
 func ConnectDB() (*DB, error) {
 	connStr := fmt.Sprintf(
@@ -31,26 +57,6 @@ func ConnectDB() (*DB, error) {
 	}
 	return &DB{DB: db}, nil
 	
-}
-
-type IPInfo struct {
-	IPBlockFrom uint32		`json:"ip_block_from"`
-	IPBlockTo 	uint32		`json:"ip_block_to"`
-	ProxyType 	string 		`json:"proxy_type"`
-	CountryCode string		`json:"country_code"`
-	CountryName string		`json:"country_name"`
-	RegionName 	string		`json:"region_name"`
-	CityName 	string		`json:"city_name"`
-	ISP 		string		`json:"isp"`
-	Domain 		string		`json:"domain"`
-	UsageType 	string		`json:"usage_type"`
-	ASN 		int			`json:"asn"`
-	AS 			string		`json:"as"`
-}
-
-type ISPInfo struct {
-	Name string `json:"name"`
-	TotalIPs int `json:"total_ips"`
 }
 
 func (db *DB) GetTopISPsInCountry(countryCode string, count int) []ISPInfo {

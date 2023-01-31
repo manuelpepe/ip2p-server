@@ -14,7 +14,7 @@ import (
 )
 
 type Server struct {
-	DB *db.DB
+	DB db.IDB
 }
 
 
