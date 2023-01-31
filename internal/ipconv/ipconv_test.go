@@ -14,17 +14,6 @@ func TestInt2ip(t *testing.T) {
 }
 
 func TestIp2int(t *testing.T) {
-	got, err := Ip2int(net.ParseIP("23.227.38.83"))
-	if err != nil {
-		t.Errorf("expected error to be nil got %v", err)
-	}
-	want := 400762451
-	if got != uint32(want) {
-		t.Errorf("Expected %d got %d", want, got)
-	}
-}
-
-func TestIp2intBadFormat(t *testing.T) {
 	type TC struct {
 		arg    string
 		expRes uint32
