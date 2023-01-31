@@ -1,8 +1,8 @@
 package ipconv
 
 import (
-    "testing"
 	"net"
+	"testing"
 )
 
 func TestInt2ip(t *testing.T) {

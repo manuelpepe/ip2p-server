@@ -1,22 +1,20 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"net/http"
-	"encoding/json"
 
 	"github.com/gorilla/mux"
 
 	"github.com/manuelpepe/ip2p-server/internal/db"
 	"github.com/manuelpepe/ip2p-server/internal/ipconv"
-	
 )
 
 type Server struct {
 	DB db.IDB
 }
-
 
 func (s *Server) HandleISP(w http.ResponseWriter, r *http.Request) {
 	// Top 10 ISP in Switzerland
@@ -28,7 +26,6 @@ func (s *Server) HandleISP(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, string(res))
 }
 
-
 func (s *Server) HandleCountry(w http.ResponseWriter, r *http.Request) {
 	// Amount of IPs per country
 	vars := mux.Vars(r)
@@ -36,7 +33,6 @@ func (s *Server) HandleCountry(w http.ResponseWriter, r *http.Request) {
 	ipCount := s.DB.GetIPCountInCountry(countryCode)
 	fmt.Fprintf(w, fmt.Sprint(ipCount))
 }
-
 
 func (s *Server) HandleIP(w http.ResponseWriter, r *http.Request) {
 	// All data for a given IP

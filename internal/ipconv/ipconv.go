@@ -1,8 +1,8 @@
 package ipconv
 
 import (
-	"net"
 	"encoding/binary"
+	"net"
 )
 
 func Int2ip(nn uint32) net.IP {
