@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 
@@ -15,7 +16,7 @@ type DB struct {
 type IDB interface {
 	GetTopISPsInCountry(string, int) []ISPInfo
 	GetIPCountInCountry(countryCode string) uint
-	GetDataForIP(ip uint32) *IPInfo
+	GetDataForIP(ip uint32) (*IPInfo, error)
 }
 
 type IPInfo struct {
@@ -103,7 +104,7 @@ func (db *DB) GetIPCountInCountry(countryCode string) uint {
 	return total_ips
 }
 
-func (db *DB) GetDataForIP(ip uint32) *IPInfo {
+func (db *DB) GetDataForIP(ip uint32) (*IPInfo, error) {
 	var ipinfo IPInfo
 	err := db.DB.QueryRow(
 		`SELECT *
@@ -125,7 +126,7 @@ func (db *DB) GetDataForIP(ip uint32) *IPInfo {
 		&ipinfo.AS,
 	)
 	if err != nil {
-		panic(err)
+		return nil, errors.New("IP not found")
 	}
-	return &ipinfo
+	return &ipinfo, nil
 }

@@ -19,11 +19,7 @@ type Server struct {
 func (s *Server) HandleISP(w http.ResponseWriter, r *http.Request) {
 	// Top 10 ISP in Switzerland
 	isps := s.DB.GetTopISPsInCountry("CH", 10)
-	res, err := json.Marshal(isps)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Fprintf(w, string(res))
+	respondWithJson(w, isps)
 }
 
 func (s *Server) HandleCountry(w http.ResponseWriter, r *http.Request) {
@@ -31,7 +27,7 @@ func (s *Server) HandleCountry(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	countryCode := vars["cc"]
 	ipCount := s.DB.GetIPCountInCountry(countryCode)
-	fmt.Fprintf(w, fmt.Sprint(ipCount))
+	respondWithJson(w, ipCount)
 }
 
 func (s *Server) HandleIP(w http.ResponseWriter, r *http.Request) {
@@ -39,8 +35,16 @@ func (s *Server) HandleIP(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	ip := net.ParseIP(vars["ip"])
 	converted := ipconv.Ip2int(ip)
-	ipinfo := s.DB.GetDataForIP(converted)
-	res, err := json.Marshal(ipinfo)
+	ipinfo, err := s.DB.GetDataForIP(converted)
+	if err != nil {
+		respondWithJson(w, err.Error())
+		return
+	}
+	respondWithJson(w, ipinfo)
+}
+
+func respondWithJson(w http.ResponseWriter, v any) {
+	res, err := json.Marshal(v)
 	if err != nil {
 		panic(err)
 	}

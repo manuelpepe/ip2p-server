@@ -46,8 +46,8 @@ func (m *MockDB) GetIPCountInCountry(countryCode string) uint {
 	return uint(ExpectedCountryInfo)
 }
 
-func (m *MockDB) GetDataForIP(ip uint32) *db.IPInfo {
-	return ExpectedIPInfo
+func (m *MockDB) GetDataForIP(ip uint32) (*db.IPInfo, error) {
+	return ExpectedIPInfo, nil
 }
 
 func TestCountryHandler(t *testing.T) {
