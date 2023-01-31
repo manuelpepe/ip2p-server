@@ -20,4 +20,12 @@ func Ip2int(ip net.IP) (uint32, error) {
 	return binary.BigEndian.Uint32(ip4), nil
 }
 
+func IntRangeToIPList(from_ip uint32, to_ip uint32) []net.IP {
+	var out []net.IP
+	for i := from_ip; i <= to_ip; i++ {
+		out = append(out, Int2ip(i))
+	}
+	return out
+}
+
 var WrongIPFormatError = errors.New("Wrong IP format")

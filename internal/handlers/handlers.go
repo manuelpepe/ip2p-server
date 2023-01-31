@@ -16,6 +16,12 @@ type Server struct {
 	DB db.IDB
 }
 
+type ExternalIPInfo struct {
+	IP net.IP `json:"ip"`
+	db.IPInfo
+	InBlockWith []net.IP `json:"in_block_with"`
+}
+
 func (s *Server) HandleISP(w http.ResponseWriter, r *http.Request) {
 	// Top 10 ISP in Switzerland
 	isps := s.DB.GetTopISPsInCountry("CH", 10)
@@ -44,7 +50,12 @@ func (s *Server) HandleIP(w http.ResponseWriter, r *http.Request) {
 		respondWithJson(w, err.Error())
 		return
 	}
-	respondWithJson(w, ipinfo)
+	resp := &ExternalIPInfo{
+		ip,
+		*ipinfo,
+		ipconv.IntRangeToIPList(ipinfo.IPBlockFrom, ipinfo.IPBlockTo),
+	}
+	respondWithJson(w, resp)
 }
 
 func respondWithJson(w http.ResponseWriter, v any) {
