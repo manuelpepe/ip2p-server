@@ -13,9 +13,9 @@ import (
 )
 
 var ExpectedISPInfo = []db.ISPInfo{
-	db.ISPInfo{Name: "ISP-A", TotalIPs: 10},
-	db.ISPInfo{Name: "ISP-B", TotalIPs: 23},
-	db.ISPInfo{Name: "ISP-C", TotalIPs: 13},
+	{Name: "ISP-A", TotalIPs: 10},
+	{Name: "ISP-B", TotalIPs: 23},
+	{Name: "ISP-C", TotalIPs: 13},
 }
 
 var ExpectedCountryInfo = 14012
