@@ -52,13 +52,8 @@ func (m *MockDB) GetDataForIP(ip uint32) (*db.IPInfo, error) {
 }
 
 func TestCountryHandler(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/country/SC", nil)
-	w := httptest.NewRecorder()
 	server := Server{DB: &MockDB{}}
-	server.HandleCountry(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-	data, err := ioutil.ReadAll(res.Body)
+	data, err := makeBasicRequest(http.MethodGet, "/country/SC", server.HandleCountry, nil)
 	if err != nil {
 		t.Errorf("expected error to be nil got %v", err)
 	}
@@ -68,13 +63,8 @@ func TestCountryHandler(t *testing.T) {
 }
 
 func TestISPHandler(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/isp/SC", nil)
-	w := httptest.NewRecorder()
 	server := Server{DB: &MockDB{}}
-	server.HandleISP(w, req)
-	res := w.Result()
-	defer res.Body.Close()
-	data, err := ioutil.ReadAll(res.Body)
+	data, err := makeBasicRequest(http.MethodGet, "/isp", server.HandleISP, nil)
 	if err != nil {
 		t.Errorf("expected error to be nil got %v", err)
 	}
@@ -101,17 +91,13 @@ func TestIPHandler(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		req := httptest.NewRequest(http.MethodGet, "/ip/"+test.arg, nil)
-		// Required to manually set Vars as Router is not used (gorilla/mux/issues/373)
-		req = mux.SetURLVars(req, map[string]string{
-			"ip": test.arg,
-		})
-		w := httptest.NewRecorder()
 		server := Server{DB: &MockDB{}}
-		server.HandleIP(w, req)
-		res := w.Result()
-		defer res.Body.Close()
-		data, err := ioutil.ReadAll(res.Body)
+		data, err := makeBasicRequest(http.MethodGet, "/ip/"+test.arg, server.HandleIP, func(req *http.Request) *http.Request {
+			// Required to manually set Vars as Router is not used (gorilla/mux/issues/373)
+			return mux.SetURLVars(req, map[string]string{
+				"ip": test.arg,
+			})
+		})
 		if err != nil {
 			t.Errorf("expected error to be nil got %v", err)
 		}
@@ -120,7 +106,28 @@ func TestIPHandler(t *testing.T) {
 			panic(err)
 		}
 		if string(data) != string(dataExpected) {
-			t.Errorf("expected %s got %s", dataExpected, data)
+			t.Errorf("%s: expected %s got %s", test.arg, dataExpected, data)
 		}
 	}
+}
+
+func makeBasicRequest(
+	meth string,
+	url string,
+	handler func(w http.ResponseWriter, r *http.Request),
+	mixin func(req *http.Request) *http.Request,
+) ([]byte, error) {
+	req := httptest.NewRequest(meth, url, nil)
+	w := httptest.NewRecorder()
+	if mixin != nil {
+		req = mixin(req)
+	}
+	handler(w, req)
+	res := w.Result()
+	defer res.Body.Close()
+	data, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
