@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -21,9 +22,9 @@ var ExpectedISPInfo = []db.ISPInfo{
 
 var ExpectedCountryInfo = 14012
 
-var ExpectedIPInfo = &db.IPInfo{
-	IPBlockFrom: 1000001,
-	IPBlockTo:   1000002,
+var BaseIPInfo = db.IPInfo{
+	IPBlockFrom: 400762451,
+	IPBlockTo:   400762453,
 	ProxyType:   "proxy_type",
 	CountryCode: "SC",
 	CountryName: "some_country",
@@ -34,6 +35,16 @@ var ExpectedIPInfo = &db.IPInfo{
 	UsageType:   "usage_type",
 	ASN:         "some_asn",
 	AS:          "some_as",
+}
+
+var ExpectedIPInfo = &ExternalIPInfo{
+	IP:     net.ParseIP("23.227.38.83"),
+	IPInfo: BaseIPInfo,
+	InBlockWith: []net.IP{
+		net.ParseIP("23.227.38.83"),
+		net.ParseIP("23.227.38.84"),
+		net.ParseIP("23.227.38.85"),
+	},
 }
 
 type MockDB struct {
@@ -48,7 +59,7 @@ func (m *MockDB) GetIPCountInCountry(countryCode string) uint {
 }
 
 func (m *MockDB) GetDataForIP(ip uint32) (*db.IPInfo, error) {
-	return ExpectedIPInfo, nil
+	return &BaseIPInfo, nil
 }
 
 func TestCountryHandler(t *testing.T) {
